@@ -20,12 +20,28 @@ def get_steam_user(request):
         }
     
     try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        return JsonResponse(response.json()) # should return the steam api response back to the fron end
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+        return JsonResponse(res.json()) # should return the steam api response back to the fron end
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
-
 # a get request by Steam vanity url
+
+def get_steam_vanity(request):
+    vanity = request.GET.get('vanityurl')
+    if not vanity:
+        return JsonResponse({'error': 'Steam Vanity is required'}, status=400)
+    
+    url = f'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
+    params = {
+        'key': STEAM_KEY,
+        'vanityurl': vanity,
+    }
+
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+        return JsonResponse(res.json())
+    except requests.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500)
