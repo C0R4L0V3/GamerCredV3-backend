@@ -9,20 +9,20 @@ STEAM_KEY = os.getenv('STEAM_API_KEY')
 
 # a get request by steam ID
 def get_steam_user(request):
-    steam_id = requests.GET.get('steamid')
+    steam_id = request.GET.get('steamid')
     if not steam_id:
         return JsonResponse({'error': 'Steam Id is required'}, status=400)
     
-    url = f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002'
+    url = f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
     params = { 
         'key': STEAM_KEY,
-        'steamid': steam_id,
+        'steamids': steam_id,
         }
     
     try:
-        res = requests.get(url, params=params)
-        res.raise_for_status()
-        return JsonResponse(res.json()) # should return the steam api response back to the fron end
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return JsonResponse(response.json()) # should return the steam api response back to the fron end
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
 
