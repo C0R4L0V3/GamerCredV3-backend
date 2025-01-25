@@ -128,18 +128,41 @@ class SteamCallbackView(View):
         #
         # return JsonResponse({'message': 'steam account linked successfully', 'steam_id': steam_id}, status=200)
 
-        steam_id = gamercred_steam_openid.validate_results(request.query_params)
+        # steam_id = gamercred_steam_openid.validate_results(request.query_params)
         try:
-            steam_id = gamercred_steam_openid.process(request.GET)
-            if steam_id:
+            #handle the openID response
+            openid_response = dict(request.GET.items())
+            # response = gamercred_steam_openid.process_response(openid_response)
+            openid_store = FileOpenIDStore(str(settings.BASE_DIR) + '/openid_store')
+            consumer = Consumer(session={}, store=openid_store)
+
+            response = consumer.complete(openid_response, request.build_absolute_uri())
+
+            if response.status != SUCCESS:
+                return JsonResponse({'message': 'Steam authentication failed'}, status=400)
+            
+            #extract the steam ID
+            openid_url = response.getDisplayIdentifier()
+            steam_id = openid_url.split('/')[-1]
+            # steam_id = response.indentity_url.split('/')[-1]
+
+            #link steam ID to the authernticated user
+
+            if not request.user.is_authenticated:
+                return JsonResponse({'message': 'user must be logged in'}, status=401)
+            
+            # steam_id = gamercred_steam_openid.process(request.GET)
+            # if steam_id:
                 # Simulate a successful login (e.g., creating or finding a user)
                 # Optionally, generate a token here for frontend use (JWT example)
-                        profile = request.user.profile
-                        profile.steam_id = steam_id
-                        profile.save()
-                return JsonResponse({'success': True, 'steam_id': steam_id})
-            else:
-                return JsonResponse({'error': 'Failed to Authenticate'}, status=403)
+            request.user.profile.steam_id = steam_id 
+            request.user.profile.save()
+
+                # return JsonResponse({'success': True, 'steam_id': steam_id})
+                #redirects the front end back to the home page ( have it redirect back to another page later on)
+            return HttpResponseRedirect(f"http://localhost:5173/")
+            # else:
+            #     return JsonResponse({'error': 'Failed to Authenticate'}, status=403)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
