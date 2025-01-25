@@ -19,23 +19,22 @@ from profiles_api.models import Profile
 
 
 STEAM_KEY = os.getenv('STEAM_API_KEY')
-FRONTEND_URL = os.getenv('FRONTEND_URL')
 
-# Create your views here. 
+# Create your views here.
 
 # a get request by steam ID
 def get_steam_user(request):
     steam_id = request.GET.get('steamid')
     if not steam_id:
         return JsonResponse({'error': 'Steam Id is required'}, status=400)
-    
+
     url = f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
-    params = { 
+    params = {
         'key': STEAM_KEY,
         # this is to target the steamIds field parameter
-        'steamids': steam_id, 
+        'steamids': steam_id,
         }
-    
+
     try:
         res = requests.get(url, params=params)
         res.raise_for_status()
@@ -48,7 +47,7 @@ def get_steam_vanity(request):
     vanity = request.GET.get('vanityurl')
     if not vanity:
         return JsonResponse({'error': 'Steam Vanity is required'}, status=400)
-    
+
     url = f'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
     params = {
         'key': STEAM_KEY,
@@ -61,7 +60,7 @@ def get_steam_vanity(request):
         return JsonResponse(res.json())
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
+
 #link steam account to user profile
     #steam login
 class SteamLoginView(LoginView):
@@ -81,7 +80,7 @@ class SteamLoginView(LoginView):
 
         #generate the full OpenId URL
         redirect_url = f"{steam_openid_url}?{urlencode(params)}"
-        return redirect(redirect_url)
+        return JsonResponse({ "redirect_url" : redirect_url })
 
     #callback view
 class SteamCallbackView(View):
@@ -103,16 +102,15 @@ class SteamCallbackView(View):
 
         if not steam_id:
             return JsonResponse({'message': "Steam Id not found"}, status=400)
-        
+
         if not request.user.is_authenticated:
             return JsonResponse({'message': 'user must be logged in'}, status=401)
-        
+
         profile = request.user.profile
         profile.steam_id = steam_id
         profile.save()
 
-        return redirect(f'{FRONTEND_URL}/profile?steam_id{steam_id}')
-        # return JsonResponse({'message': 'steam account linked successfully', 'steam_id': steam_id}, status=200)
+        return JsonResponse({'message': 'steam account linked successfully', 'steam_id': steam_id}, status=200)
 
 
 
@@ -125,7 +123,7 @@ class SteamCallbackView(View):
 #             return Response({"message": "Steam"})
 
     #     return super().get(request) # should redirect to steam openId page
-    
+
     # def post(self, request):
     #     openid_url = request.POST.get('openid_url')
     #     #should handl openid verification from steam

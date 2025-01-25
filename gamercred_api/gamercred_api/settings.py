@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+SITE_URL = os.getenv("SITE_URL", "http://localhost:5173")
 
 # loads enviroment variables
 load_dotenv(os.path.join(BASE_DIR, '.env'))
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True # add this
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'gamercred_api.urls'
 
@@ -158,7 +158,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 LOGIN_REDIRECT_URL = '/'  # Redirect after successful login
 
 #openid endpoint for steam
-OPENID_SSO_SERVER_URL = 'https://steamcommunity.com/openid' 
+OPENID_SSO_SERVER_URL = 'https://steamcommunity.com/openid'
 
 SOCIALACCOUNT_PROVIDERS = {
     'steam': {
