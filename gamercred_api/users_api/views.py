@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from rest_framework import generics, status
 from .serializers import UserSerializer
 from profiles_api.serializers import ProfileSerializer
 from profiles_api.models import Profile
+
 
 # Create your views here.
 
@@ -23,7 +25,8 @@ class RegisterUserAPIView(APIView):
             profile, created = Profile.objects.get_or_create(
                 account = user,
                 defaults={
-                    "profile_pic": "https://i.imgur.com/lHubf1C.jpeg"
+                    "profile_pic": "https://i.imgur.com/lHubf1C.jpeg",
+                    
                 }
             )
 
