@@ -131,12 +131,13 @@ class SteamCallbackView(View):
         steam_id = gamercred_steam_openid.validate_results(request.query_params)
         try:
             steam_id = gamercred_steam_openid.process(request.GET)
+            
             if steam_id:
                 # Simulate a successful login (e.g., creating or finding a user)
                 # Optionally, generate a token here for frontend use (JWT example)
-                        profile = request.user.profile
-                        profile.steam_id = steam_id
-                        profile.save()
+                profile = request.user.profile
+                profile.steam_id = steam_id
+                profile.save()
                 return JsonResponse({'success': True, 'steam_id': steam_id})
             else:
                 return JsonResponse({'error': 'Failed to Authenticate'}, status=403)
