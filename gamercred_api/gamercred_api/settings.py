@@ -11,11 +11,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+SITE_URL = os.getenv("SITE_URL", "http://localhost:5173")
+
+# loads enviroment variables
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,12 +31,19 @@ SECRET_KEY = 'django-insecure-s&!rz9u+oben6+tr!3@$j$u5puyvtzsycb=0byf87#&e0bn43x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost','3.88.228.173', '127.0.0.1', 'gamer-cred.servegame.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.steam',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.openid_connect',
     'corsheaders',
     'rest_framework',
     'profiles_api',
@@ -45,6 +57,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'allauth.account.middleware.AccountMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,8 +67,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True # add this
 
 ROOT_URLCONF = 'gamercred_api.urls'
 
@@ -131,3 +142,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', #defualt backend
+    'allauth.account.auth_backends.AuthenticationBackend', # allauth Backend
+)
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Can be 'username', 'email', or 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+LOGIN_REDIRECT_URL = '/'  # Redirect after successful login
+
+#openid endpoint for steam
+OPENID_SSO_SERVER_URL = 'https://steamcommunity.com/openid'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'steam': {
+        'APP': {
+            'client_id': os.getenv('STEAM_API_KEY'),
+            'secret': os.getenv('STEAM_API_KEY'),
+        }
+    }
+}
