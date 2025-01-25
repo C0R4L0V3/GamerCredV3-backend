@@ -19,7 +19,6 @@ from profiles_api.models import Profile
 
 
 STEAM_KEY = os.getenv('STEAM_API_KEY')
-FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 # Create your views here.
 
@@ -81,7 +80,7 @@ class SteamLoginView(LoginView):
 
         #generate the full OpenId URL
         redirect_url = f"{steam_openid_url}?{urlencode(params)}"
-        return redirect(redirect_url)
+        return JsonResponse({ "redirect_url" : redirect_url })
 
     #callback view
 class SteamCallbackView(View):
@@ -111,8 +110,7 @@ class SteamCallbackView(View):
         profile.steam_id = steam_id
         profile.save()
 
-        return redirect(f'{FRONTEND_URL}/profile?steam_id{steam_id}')
-        # return JsonResponse({'message': 'steam account linked successfully', 'steam_id': steam_id}, status=200)
+        return JsonResponse({'message': 'steam account linked successfully', 'steam_id': steam_id}, status=200)
 
 
 
