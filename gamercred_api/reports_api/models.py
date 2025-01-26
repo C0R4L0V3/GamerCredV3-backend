@@ -13,15 +13,18 @@ class ReportSchema(models.Model):
     sexual_harrasment = models.BooleanField(default=False)
     homo_transphobia = models.BooleanField(default=False)
     griefing = models.BooleanField(default=False)
-    teamwork = models.BooleanField(default=False)
+    cheating = models.BooleanField(default=False)
     friendly_helpful = models.BooleanField(default=False)
+    teamwork = models.BooleanField(default=False)
+    encouraging_play = models.BooleanField(default=False)
     mentorship = models.BooleanField(default=False)
+    communication = models.BooleanField(default=False)
     sportsmanship = models.BooleanField(default=False)
     inclusive = models.BooleanField(default=False)
     #media urls
     images_url = models.CharField(max_length=200, blank=True, null=True)
     video_url = models.CharField(max_length=200, blank=True, null=True)
-    
+
     body_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
