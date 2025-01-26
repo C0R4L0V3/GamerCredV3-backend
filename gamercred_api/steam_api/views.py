@@ -89,7 +89,7 @@ class SteamLoginView(LoginView):
         # need to pass the target user's id in the return_to url
         user_id = request.user.id
         print('user id: ', user_id )
-        return_to_url = f'http://localhost:8000/link-steam/callback/?user_id={user_id}'
+        return_to_url = f'http://localhost:8000/link-steam/callback/?user_id={request.user.pk}'
         gamercred_steam_openid = SteamOpenID(
             realm="http://localhost:8000/link-steam/",
             return_to=return_to_url

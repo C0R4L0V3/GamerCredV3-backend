@@ -26,3 +26,19 @@ class ProfileView(generics.ListAPIView):
             raise NotFound('Profile not found')
 
 
+class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all().order_by('id')
+    serializer_class = ProfileSerializer
+
+    def retrieve(self, request, pk=None):
+        try: 
+
+            profile = Profile.objects.get(user_id=pk)
+            profile_data = ProfileSerializer(profile).data
+
+            #fetch other data related to this model
+
+            return JsonResponse(profile_data)
+        except Profile.DoesNotExist:
+            raise NotFound('Profile not found')
+        
