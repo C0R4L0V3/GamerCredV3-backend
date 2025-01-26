@@ -86,6 +86,10 @@ def get_game_list(request):
     if not steam_id:
         return JsonResponse({'error': 'Steam Id required'}, status=400)
     
+    #this would fetch most recently played games
+    # url = f'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/'
+
+    #this would fetch all the players owned games
     url = f'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
     params = {
         'key': STEAM_KEY,
@@ -112,6 +116,41 @@ def get_game_list(request):
 
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500 )
+    
+
+    #This would the player's achievemtns for a specific game, will likely not incorperate
+def get_player_achievements(request):
+
+    # This would be game specific
+
+    app_id = request.GET.get('appid')
+
+    if not app_id:
+        return JsonResponse({'error': 'Steam Id required'}, status=400)
+    
+    url = f'http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/'
+    params = {
+        'key': STEAM_KEY,
+        'appid': app_id,
+        #maybe there are other option things i can include???
+    }
+
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+
+        data = res.json()
+        print(data)
+        #this may or may not exsist?
+        # achievments = data.get('response', {}).get('achievement', [])
+
+        if not data:
+            return JsonResponse({'message': 'no achievements found for this player.'}, status=200)
+        
+        return JsonResponse({'response': res.json()}, status=200)
+    
+    except requests.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500)
     
 
 
