@@ -78,7 +78,7 @@ def get_steam_vanity(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 
-#fetch a list of owned steam games got a player based on their steam id
+#fetch a list of recently played games by player steam ID
 def get_game_list(request):
     #need to pass the found players steam id as param
     steam_id = request.GET.get('steamid')
@@ -87,7 +87,40 @@ def get_game_list(request):
         return JsonResponse({'error': 'Steam Id required'}, status=400)
     
     #this would fetch most recently played games
-    # url = f'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/'
+    url = f'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/'
+    params = {
+        'key': STEAM_KEY,
+        'steamid': steam_id,
+        'include_appinfo': True, # this should include game names and other info
+        'include_played_free_games': True # should include free to play games
+    }
+
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+
+        data = res.json()
+        # print(data)
+        games = data.get('response', {}).get('games', [])
+        # print(games)
+        if not games:
+            return JsonResponse({'message': 'No games found for this Player.'}, status=200)
+        
+        return JsonResponse({'response': res.json()}, status=200)
+
+        # game_list = [{'appid': game['appid'], 'name': game['name'], 'playtime': game['playtime_forever'], 'img_icon_url': game['img_icon_url']} for game in games]
+        # return JsonResponse({'games': game_list}, status=200)
+
+    except requests.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500 )
+    
+#Get complete list of all games owned by player ID
+def get_complete_game_list(request):
+    #need to pass the found players steam id as param
+    steam_id = request.GET.get('steamid')
+
+    if not steam_id:
+        return JsonResponse({'error': 'Steam Id required'}, status=400)
 
     #this would fetch all the players owned games
     url = f'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
@@ -103,9 +136,9 @@ def get_game_list(request):
         res.raise_for_status()
 
         data = res.json()
-        print(data)
+        # print(data)
         games = data.get('response', {}).get('games', [])
-        print(games)
+        # print(games)
         if not games:
             return JsonResponse({'message': 'No games found for this Player.'}, status=200)
         
@@ -116,6 +149,8 @@ def get_game_list(request):
 
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500 )
+    
+
     
 
     #This would the player's achievemtns for a specific game, will likely not incorperate

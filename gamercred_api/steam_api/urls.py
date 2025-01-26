@@ -10,7 +10,8 @@ urlpatterns = [
     path('link-steam/', views.SteamLoginView.as_view(), name='steam_login'), # this hould start the login for steam
     path('link-steam/callback/', views.SteamCallbackView.as_view(), name='steam_callback'), # callback to handle steams response
     path('game-list/', views.get_game_list, name='get_game_list'),
-    path('player-achievements/', views.get_player_achievements, name='get_player_achievements')
+    path('player-achievements/', views.get_player_achievements, name='get_player_achievements'),
+    path('complete-game-list/', views.get_complete_game_list, name='get_complete_game_list')
 ]
 
 '''
