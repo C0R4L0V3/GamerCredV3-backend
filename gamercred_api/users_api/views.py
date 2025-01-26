@@ -55,16 +55,20 @@ class LoginAPIView(APIView):
         if user is not None:
             login(request, user)
 
-
+        #fetch both puser object and profile
+            profile = user.profile if hasattr(user, 'profile') else None
+        
+            profile_data = ProfileSerializer(profile).data
             user_data = UserSerializer(user).data
 
             return Response({
                 'message': 'Login Successful',
                 'user': user_data,
+                'profile': profile_data
             }, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-        
+    
 #logout
 class LogoutView(LogoutView):
     next_page = '/'
