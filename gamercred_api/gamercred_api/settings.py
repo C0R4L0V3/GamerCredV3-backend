@@ -168,3 +168,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+SESSION_COOKIE_SECURE = False # set to true for HTTPS pin production
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE ='Lax'
