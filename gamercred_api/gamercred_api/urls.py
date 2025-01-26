@@ -24,4 +24,5 @@ urlpatterns = [
     path('auth/', include('users_api.urls')),
     path('', include('steam_api.urls')),
     path('accounts/', include('allauth.urls')),
+    path('reports/', include('reports_api.urls'))
 ]
