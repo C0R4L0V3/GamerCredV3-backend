@@ -9,7 +9,7 @@ urlpatterns = [
     path('api/steam_vanity/', views.get_steam_vanity, name="get_steam_vanity"),
     path('link-steam/', views.SteamLoginView.as_view(), name='steam_login'), # this hould start the login for steam
     path('link-steam/callback/', views.SteamCallbackView.as_view(), name='steam_callback'), # callback to handle steams response
-
+    path('game-list/', views.get_game_list, name='get_game_list')
 ]
 
 '''

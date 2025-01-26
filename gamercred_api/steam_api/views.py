@@ -38,7 +38,7 @@ STEAM_KEY = os.getenv('STEAM_API_KEY')
 
 # Create your views here.
 
-# a get request by steam ID
+# a get request to get the steam ID
 def get_steam_user(request):
     steam_id = request.GET.get('steamid')
     if not steam_id:
@@ -58,7 +58,7 @@ def get_steam_user(request):
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-# a get request by Steam vanity url
+# a get request get the Steam vanity url
 def get_steam_vanity(request):
     vanity = request.GET.get('vanityurl')
     if not vanity:
@@ -76,6 +76,45 @@ def get_steam_vanity(request):
         return JsonResponse(res.json())
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+#fetch a list of owned steam games got a player based on their steam id
+def get_game_list(request):
+    #need to pass the found players steam id as param
+    steam_id = request.GET.get('steamid')
+
+    if not steam_id:
+        return JsonResponse({'error': 'Steam Id required'}, status=400)
+    
+    url = f'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
+    params = {
+        'key': STEAM_KEY,
+        'steamid': steam_id,
+        'include_appinfo': True, # this should include game names and other info
+        'include_played_free_games': True # should include free to play games
+    }
+
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+
+        data = res.json()
+        print(data)
+        games = data.get('response', {}).get('games', [])
+        print(games)
+        if not games:
+            return JsonResponse({'message': 'No games found for this Player.'}, status=200)
+        
+        return JsonResponse({'response': res.json()}, status=200)
+
+        # game_list = [{'appid': game['appid'], 'name': game['name'], 'playtime': game['playtime_forever'], 'img_icon_url': game['img_icon_url']} for game in games]
+        # return JsonResponse({'games': game_list}, status=200)
+
+    except requests.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500 )
+    
+
+
 
 #link steam account to user profile
     #steam login
@@ -88,7 +127,7 @@ class SteamLoginView(LoginView):
         
         # need to pass the target user's id in the return_to url
         user_id = request.GET.get('user_id')
-        
+
         print('user id: ', user_id )
         return_to_url = f'http://localhost:8000/link-steam/callback/?user_id={user_id}'
         gamercred_steam_openid = SteamOpenID(
