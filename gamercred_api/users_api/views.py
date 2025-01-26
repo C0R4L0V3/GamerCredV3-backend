@@ -22,18 +22,21 @@ class RegisterUserAPIView(APIView):
 
         if user_serializer.is_valid():
             user = user_serializer.save()
+            #create the user profile
             profile, created = Profile.objects.get_or_create(
                 account = user,
                 defaults={
                     "profile_pic": "https://i.imgur.com/lHubf1C.jpeg",
-                    
                 }
             )
+            # Log the user in after creation
+            user = authenticate(username=user.username, password=request.data.get('password'))
+            if user: login(request, user)
 
             profile_serializer = ProfileSerializer(profile)
 
             return Response({
-                'message': 'user created successfully',
+                'message': 'user created and logged in successfully',
                 'user': user_serializer.data,
                 'profile':profile_serializer.data
             }, status=status.HTTP_201_CREATED)
