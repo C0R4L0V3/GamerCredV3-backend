@@ -6,6 +6,7 @@ class ReportSchema(models.Model):
     report_owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="reports")
     player_reported =models.CharField(max_length=30)
     game_id = models.CharField(max_length=100)
+    game_name = models.CharField(max_length=100, null=True, blank=True)
     #player experiences
     harassment = models.BooleanField(default=False)
     bullying = models.BooleanField(default=False)
