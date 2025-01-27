@@ -57,6 +57,7 @@ def get_steam_user(request):
         return JsonResponse(res.json()) # should return the steam api response back to the fron end
     except requests.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
 
 # a get request get the Steam vanity url
 def get_steam_vanity(request):
@@ -106,7 +107,7 @@ def get_game_list(request):
         if not games:
             return JsonResponse({'message': 'No games found for this Player.'}, status=200)
         
-        return JsonResponse({'response': res.json()}, status=200)
+        return JsonResponse({'recent_games': games}, status=200)
 
         # game_list = [{'appid': game['appid'], 'name': game['name'], 'playtime': game['playtime_forever'], 'img_icon_url': game['img_icon_url']} for game in games]
         # return JsonResponse({'games': game_list}, status=200)
@@ -142,7 +143,7 @@ def get_complete_game_list(request):
         if not games:
             return JsonResponse({'message': 'No games found for this Player.'}, status=200)
         
-        return JsonResponse({'response': res.json()}, status=200)
+        return JsonResponse({'all_games': games}, status=200)
 
         # game_list = [{'appid': game['appid'], 'name': game['name'], 'playtime': game['playtime_forever'], 'img_icon_url': game['img_icon_url']} for game in games]
         # return JsonResponse({'games': game_list}, status=200)
