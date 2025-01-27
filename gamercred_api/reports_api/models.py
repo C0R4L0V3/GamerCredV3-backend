@@ -7,10 +7,10 @@ class ReportSchema(models.Model):
     player_reported =models.CharField(max_length=30)
     game_id = models.CharField(max_length=100)
     #player experiences
-    harrassment = models.BooleanField(default=False)
+    harassment = models.BooleanField(default=False)
     bullying = models.BooleanField(default=False)
     racism = models.BooleanField(default=False)
-    sexual_harrasment = models.BooleanField(default=False)
+    sexual_harassment = models.BooleanField(default=False)
     homo_transphobia = models.BooleanField(default=False)
     griefing = models.BooleanField(default=False)
     cheating = models.BooleanField(default=False)
@@ -21,9 +21,9 @@ class ReportSchema(models.Model):
     communication = models.BooleanField(default=False)
     sportsmanship = models.BooleanField(default=False)
     inclusive = models.BooleanField(default=False)
-    #media urls
-    images_url = models.CharField(max_length=200, blank=True, null=True)
-    video_url = models.CharField(max_length=200, blank=True, null=True)
+    #media urls pointing to buckt storage
+    images_url = models.URLField(max_length=500, blank=True, null=True)
+    video_url = models.URLField(max_length=500, blank=True, null=True)
 
     body_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
