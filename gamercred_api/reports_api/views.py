@@ -21,4 +21,4 @@ def get_reports_by_player(request):
         return JsonResponse({'nessage': 'No Reports found for the specifed player'}, status=400)
     
     reports_data = list(reports.values())
-    return JsonResponse({'reports about player': reports_data}, status=200)
+    return JsonResponse({reports_data}, status=200)
