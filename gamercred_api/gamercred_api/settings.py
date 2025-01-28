@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['localhost','3.88.228.173', '127.0.0.1', 'gamer-cred.servegame.
 # Application definition
 
 INSTALLED_APPS = [
+    'storages',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -172,3 +173,31 @@ SOCIALACCOUNT_PROVIDERS = {
 # SESSION_COOKIE_SECURE = False # set to true for HTTPS pin production
 # SESSION_COOKIE_HTTPONLY = True
 # SESSION_COOKIE_SAMESITE ='Lax'
+
+# USE_S3 = os.getenv('USE_S3') == 'TRUE'
+
+# if USE_S3:
+# AWS S3 Configuration
+AWS_ACCESS_KEY_ID = os.getenv('DEV_AWS_ACCESS_KEY_ID', 'PRO_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('DEV_AWS_SECRET_ACCESS_KEY', 'PRO_AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'gamercred-media'
+AWS_S3_REGION_NAME = 'us-east-1'  # e.g., 'us-east-1'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_DEFAULT_ACL = 'public-read'
+
+# Static files storage
+AWS_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# else:
+# Media files storage
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# STATICFILES_DIR = (os.path.join(BASE_DIR, 'static'),)
+
+# MEDIA_URL = '/mediafiles/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')

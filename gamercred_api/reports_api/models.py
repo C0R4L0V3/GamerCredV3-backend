@@ -23,11 +23,15 @@ class ReportSchema(models.Model):
     sportsmanship = models.BooleanField(default=False)
     inclusive = models.BooleanField(default=False)
     #media urls pointing to buckt storage
-    images_url = models.URLField(max_length=500, blank=True, null=True)
-    video_url = models.URLField(max_length=500, blank=True, null=True)
+    images_url = models.URLField(blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
 
     body_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    #media file fields
+    images = models.ImageField(upload_to='reports_api/images/',blank=True, null=True)
+    video = models.FileField(upload_to='reports_api/videos/',blank=True, null=True)
 
 
     def __str__(self):
